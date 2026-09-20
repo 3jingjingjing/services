@@ -1,17 +1,3 @@
-"""
-LINE Bot × Claude API（知識庫限定回答版）
-------------------------------------------------
-架構：
-  LINE 使用者傳訊息
-    → LINE Webhook 打到本服務 /callback
-    → 驗證簽章、解析訊息
-    → 組成 system prompt（含 knowledge.txt 內容 + 「不知道就說不知道」規則）
-    → 呼叫 Claude API 取得回覆
-    → 透過 LINE Messaging API 回覆使用者
-
-部署：Render (Web Service)
-"""
-
 import os
 import logging
 from pathlib import Path
