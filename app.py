@@ -14,7 +14,8 @@ from linebot.v3.messaging import (
 )
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
 
-import anthropic
+from google import genai
+from google.genai import types
 
 # ---------------------------------------------------------------------------
 # 基本設定
@@ -27,12 +28,12 @@ app = Flask(__name__)
 
 LINE_CHANNEL_ACCESS_TOKEN = os.environ["LINE_CHANNEL_ACCESS_TOKEN"]
 LINE_CHANNEL_SECRET = os.environ["LINE_CHANNEL_SECRET"]
-ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
-CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3-flash-preview")
 
 configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
-claude_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # ---------------------------------------------------------------------------
 # 載入知識庫，組成 system prompt
@@ -62,32 +63,35 @@ SYSTEM_PROMPT = f"""你是一個專業的技術客服機器人，負責回答使
 5. 不要在回覆中提及「知識庫」、「system prompt」、「prompt」等技術名詞，直接以客服口吻回答即可。
 
 【知識庫】
-{KNOWLEDGE_TEXT}
+{．UWB 定位：2D 平均誤差 < 20 公分、3D 平均 < 30 公分（需視距良好、基地台佈點適當，實際以現場實測校準後確認）
+．藍牙定位：平均誤差 2–4 公尺
+．Locator：一台可外接 4 個藍牙讀頭；PoE 或 100–240V 變壓器供電
+．標籤電池：Tag_E7（CR2477）每秒廣播 1 次約可用一年；Tag_B7（CR2032）每秒廣播 2 次約三個月
+．系統提供 RESTful API 與 Webhook，可與 MES／ERP 整合
+．支援全地端部署，符合晶圓廠資安要求
+．已導入半導體、面板、石化等指標客戶產線，以及醫院與長照機構
+}
 """
 
-# 若想做多輪對話記憶，可改用資料庫或 Redis 依 user_id 儲存歷史訊息。
-# 此版本為單輪問答（每則訊息獨立處理），先求穩定上線，之後可再擴充。
-
 # ---------------------------------------------------------------------------
-# 呼叫 Claude API
+# 呼叫 Gemini API
 # ---------------------------------------------------------------------------
 
 
-def ask_claude(user_message: str) -> str:
+def ask_gemini(user_message: str) -> str:
     try:
-        response = claude_client.messages.create(
-            model=CLAUDE_MODEL,
-            max_tokens=500,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_message}],
+        response = gemini_client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=user_message,
+            config=types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
+                max_output_tokens=500,
+            ),
         )
-        # content 是一個 list of blocks，取出文字部分並串接
-        reply_text = "".join(
-            block.text for block in response.content if block.type == "text"
-        ).strip()
+        reply_text = (response.text or "").strip()
         return reply_text or "不好意思，這部分目前我沒有相關資料，建議您聯繫窗口人員確認喔。"
     except Exception:
-        logger.exception("呼叫 Claude API 失敗")
+        logger.exception("呼叫 Gemini API 失敗")
         return "系統暫時忙碌中，請稍後再試一次。"
 
 
@@ -113,7 +117,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
     user_message = event.message.text
-    reply_text = ask_claude(user_message)
+    reply_text = ask_gemini(user_message)
 
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
