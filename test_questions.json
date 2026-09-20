@@ -1,0 +1,92 @@
+[
+  {
+    "id": "q01",
+    "question": "UWB定位的誤差大概多少？",
+    "type": "in_scope",
+    "must_include": ["20", "公分"]
+  },
+  {
+    "id": "q02",
+    "question": "如果是3D定位呢，精準度如何？",
+    "type": "in_scope",
+    "must_include": ["30", "公分"]
+  },
+  {
+    "id": "q03",
+    "question": "藍牙定位準不準？誤差多大",
+    "type": "in_scope",
+    "must_include": ["2", "4", "公尺"]
+  },
+  {
+    "id": "q04",
+    "question": "一台Locator最多可以接幾個藍牙讀頭？",
+    "type": "in_scope",
+    "must_include": ["4"]
+  },
+  {
+    "id": "q05",
+    "question": "Locator的供電方式是什麼？",
+    "type": "in_scope",
+    "must_include": ["PoE"]
+  },
+  {
+    "id": "q06",
+    "question": "Tag_E7用的是什麼電池，可以用多久？",
+    "type": "in_scope",
+    "must_include": ["CR2477", "一年"]
+  },
+  {
+    "id": "q07",
+    "question": "Tag_B7的電池壽命大概多久？",
+    "type": "in_scope",
+    "must_include": ["三個月"]
+  },
+  {
+    "id": "q08",
+    "question": "系統可以跟我們的ERP整合嗎？",
+    "type": "in_scope",
+    "must_include": ["API", "ERP"]
+  },
+  {
+    "id": "q09",
+    "question": "可以全地端部署嗎？晶圓廠資安有符合嗎",
+    "type": "in_scope",
+    "must_include": ["地端"]
+  },
+  {
+    "id": "q10",
+    "question": "有沒有醫院或長照機構在用你們的系統？",
+    "type": "in_scope",
+    "must_include": ["醫院"]
+  },
+  {
+    "id": "q11",
+    "question": "系統的價格大概多少錢？",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "q12",
+    "question": "保固期多久？壞掉怎麼辦？",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "q13",
+    "question": "安裝需要多久時間？要多少人力施工？",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "q14",
+    "question": "可以跟SAP系統整合嗎？",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "q15",
+    "question": "標籤防水等級是IP幾級？",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "q16",
+    "question": "你們公司在台灣哪裡有據點？",
+    "type": "out_of_scope"
+  }
+]
